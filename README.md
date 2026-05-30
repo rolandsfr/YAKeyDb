@@ -28,13 +28,20 @@ DELETE <key>
 LIST
 ```
 
-5. Save and exit
+5. Count entries
+
+```
+COUNT
+```
+
+6. Check if key exists
+
+```
+EXISTS <key>
+```
+
+7. Save and exit
 
 ```
 EXIT
-```
-
-6. Check if some key exists
-```
-EXISTS <key>
 ```

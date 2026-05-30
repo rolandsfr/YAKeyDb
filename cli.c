@@ -23,5 +23,13 @@ int parse_buf(char* buf, char params[][256]) {
         }
     }
 
+
+    // save last word if no \n present at the end
+    if(idx > 0 && word < MAX_ARG_COUNT) {
+        strncpy(params[word], start, sizeof(char) * (idx)); 
+        params[word][idx] = '\0';
+        word++;
+    }
+
     return word;
 }

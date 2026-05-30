@@ -5,33 +5,26 @@
 #include "api.h"
 #include "cli.h"
 
-
-
 int main() {
     Hashtable table;
     init_table(&table);
 
-
     // get store file
     printf("please enter storefile path: ");
-    char filename[256];
-    scanf("%s", filename);
-
-    FILE* file = fopen(filename, "r+");
+    char filepath[1024] = {0};
+    fgets(filepath, sizeof(filepath), stdin);
+    filepath[strcspn(filepath, "\r\n")] = '\0';
+    FILE* file = fopen(filepath, "r+");
     
     if(file == NULL) {
-        printf("Failed to open the file, aborting.");
-        return 1;
+        printf("Failed to open the file. Starting without data.\n");
+    } else {
+        load_file(file, &table);
+        fclose(file);
     }
     
-
-    load_file(file, &table);
-    fclose(file);
-
     char arg_payload[MAX_ARG_COUNT][256] = {0};
     int word_count = 0;
-
-    printf("item count added: %zu\n", table.size);
 
     // wait for commands
     while(1) {
@@ -75,6 +68,8 @@ int main() {
             }
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
             print_table(&table);
+        } else if(strcmp(arg_payload[0], "COUNT") == 0) {
+            printf("%zu\n", table.size);
         } else if(strcmp(arg_payload[0], "EXISTS") == 0) {
             if(word_count == 2) {
                 int exists = get_item_idx(&table, arg_payload[1]);
@@ -87,7 +82,7 @@ int main() {
                 printf("expected 1 arg (key).\n");
             }
         } else if (strcmp(arg_payload[0], "EXIT") == 0) {
-            file = fopen(filename, "w"); // reopen to truncate contents to overwrite with updated data
+            file = fopen(filepath, "w"); // reopen to truncate contents to overwrite with updated data
             if(!file) {
                 printf("failed to open the file.\n");
                 return 1;
@@ -95,6 +90,8 @@ int main() {
             save_table(file, &table);
             fclose(file);
             break;
+        } else {
+            printf(">> unknown instruction\n");
         }
 
     }

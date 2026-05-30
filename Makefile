@@ -1,5 +1,5 @@
 objects := main.o api.o cli.o
-flags := -Wall -Wextra -fsanitize=address -std=c99 
+flags := -Wall -Wextra  -std=c99 
 
 # link (sanitizer flags must be passed at link time too)
 main: $(objects)
