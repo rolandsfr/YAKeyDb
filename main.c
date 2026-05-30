@@ -57,7 +57,7 @@ int main() {
                 if(res == -1) {
                     printf(">> fail\n");
                 } else {
-                printf(">> success\n");
+                    printf(">> success\n");
                 }
             } else {
                 printf("expected 1 arg (key).\n");
@@ -67,14 +67,25 @@ int main() {
                 char* value = get_item(&table, arg_payload[1]);
                 if(!value) {
                     printf(">> null\n");
+                } else {
+                    printf(">> %s\n", value);
                 }
-                printf(">> %s\n", value);
             } else {
                 printf("expected 1 arg (key).\n");
             }
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
             print_table(&table);
-
+        } else if(strcmp(arg_payload[0], "EXISTS") == 0) {
+            if(word_count == 2) {
+                int exists = get_item_idx(&table, arg_payload[1]);
+                if(exists == -1) {
+                    printf(">> False\n");
+                } else {
+                    printf(">> True\n");
+                }
+            } else {
+                printf("expected 1 arg (key).\n");
+            }
         } else if (strcmp(arg_payload[0], "EXIT") == 0) {
             file = fopen(filename, "w"); // reopen to truncate contents to overwrite with updated data
             if(!file) {

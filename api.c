@@ -145,7 +145,6 @@ char* get_item(Hashtable* table, char* key) {
     }
 }
 
-
 int delete_item(Hashtable* table, char* key) {
     int idx = get_item_idx(table, key);
     if(idx == -1) return 1;

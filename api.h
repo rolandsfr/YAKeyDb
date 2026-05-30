@@ -24,6 +24,8 @@ char* get_item(Hashtable* table, char* key);
 
 int delete_item(Hashtable* table, char* key);
 
+int get_item_idx(Hashtable*table, char* key);
+
 void free_table(Hashtable* table);
 
 /** IO */ 
