@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
 
         } else if (strcmp(arg_payload[0], "EXIT") == 0) {
+            // TODO: save to file
            break; 
         }
 
@@ -54,4 +55,5 @@ int main(int argc, char** argv) {
     print_table(&table);
 
     // TODO: free table
+    free_table(&table);
 }
