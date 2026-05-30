@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "api.h"
+#include "cli.h"
 
 #define CAPACITY_UNIT 4
 
@@ -13,7 +14,7 @@ void init_entry_list(Hashtable* table, size_t capacity) {
         printf("Allocation failed!");
         return;
     }
-    for(int i = 0; i < capacity; i ++) {
+    for(size_t i = 0; i < capacity; i ++) {
         table->entry_list[i] = (Entry){
             .key = NULL,
             .value = NULL
@@ -22,7 +23,7 @@ void init_entry_list(Hashtable* table, size_t capacity) {
 }
 
 void free_entry_list(Entry* entry_list, size_t capacity) {
-    for(int i = 0; i < capacity; i++) {
+    for(size_t i = 0; i < capacity; i++) {
         if(entry_list[i].key && entry_list[i].value) {
             free(entry_list[i].key);
             free(entry_list[i].value);
@@ -39,7 +40,7 @@ void init_table(Hashtable* table) {
 }
 
 void print_table(Hashtable* table) {
-    for(int i = 0; i < table->capacity; i++) {
+    for(size_t i = 0; i < table->capacity; i++) {
         Entry entry = table->entry_list[i];
         if(entry.key == NULL || entry.value == NULL) continue;
         printf("%s = %s\n", entry.key, entry.value);
@@ -68,11 +69,11 @@ void resize_table(Hashtable* table) {
         return;
     }
 
-    for(int i = 0; i < table->capacity; i++) {
+    for(size_t i = 0; i < table->capacity; i++) {
         entry_list[i] = table->entry_list[i];
     }
 
-    for(int i = table->capacity; i < new_capacity; i++) {
+    for(size_t i = table->capacity; i < new_capacity; i++) {
         entry_list[i] = (Entry){
             .key = NULL,
             .value = NULL
@@ -89,15 +90,14 @@ void add_item(Hashtable* table, char* key, char* value) {
     if(table->size == table->capacity) {
         resize_table(table);
     }
-
     
-    int idx = hash(key, table->capacity);
+    size_t idx = hash(key, table->capacity);
 
     while(table->entry_list[idx].key != NULL) {
         if (strcmp(table->entry_list[idx].key, key) == 0) {
             // update value
             free(table->entry_list[idx].value);
-            table->entry_list[idx].value = malloc(strlen(value + 1));
+            table->entry_list[idx].value = malloc(strlen(value) + 1);
             strcpy(table->entry_list[idx].value, value);
             return;
         }
@@ -118,4 +118,29 @@ void free_table(Hashtable* table) {
     table->entry_list = NULL;
     table->capacity = 0;
     table->size = 0;
+}
+
+// FILE IO
+
+
+void save_table(FILE* file, Hashtable* table) {
+    for(size_t i = 0; i < table->capacity; i++) {
+        if(!table->entry_list[i].key || !table->entry_list[i].value) continue;
+
+        fprintf(file, "%s %s\n", table->entry_list[i].key, table->entry_list[i].value);
+    }
+}
+
+void load_file(FILE* file, Hashtable* table) {
+    char buf[256];
+    char params[MAX_ARG_COUNT][256];
+
+    while(fgets(buf, sizeof(buf), file)) {
+        int word_count = parse_buf(buf, params);
+        if(word_count < 2) {
+            printf("bad input\n");
+            continue;
+        }
+        add_item(table, params[0], params[1]);
+    }
 }

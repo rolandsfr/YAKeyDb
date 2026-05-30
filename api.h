@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct {
     char* key;
@@ -9,7 +10,7 @@ typedef struct {
 
 typedef struct  {
     size_t size;
-   size_t capacity;
+    size_t capacity;
     Entry* entry_list;
 } Hashtable;
 
@@ -20,3 +21,9 @@ void print_table(Hashtable* table);
 void add_item(Hashtable* table, char* key, char* value);
 
 void free_table(Hashtable* table);
+
+/** IO */ 
+
+void save_table(FILE* file, Hashtable* table);
+
+void load_file(FILE* file, Hashtable* table);

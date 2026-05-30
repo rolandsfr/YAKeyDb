@@ -7,15 +7,26 @@
 
 
 
-int main(int argc, char** argv) {
+int main() {
     Hashtable table;
     init_table(&table);
 
 
     // get store file
     printf("please enter storefile path: ");
-    char storefile[256];
-    scanf("%s", storefile);
+    char filename[256];
+    scanf("%s", filename);
+
+    FILE* file = fopen(filename, "r+");
+    
+    if(file == NULL) {
+        printf("Failed to open the file, aborting.");
+        return 1;
+    }
+    
+
+    load_file(file, &table);
+    fclose(file);
 
     char arg_payload[MAX_ARG_COUNT][256] = {0};
     int word_count = 0;
@@ -43,17 +54,20 @@ int main(int argc, char** argv) {
         } else if(strcmp(arg_payload[0], "GET") == 0) {
 
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
+            print_table(&table);
 
         } else if (strcmp(arg_payload[0], "EXIT") == 0) {
-            // TODO: save to file
-           break; 
+            file = fopen(filename, "w"); // reopen to truncate contents to overwrite with updated data
+            if(!file) {
+                printf("failed to open the file.\n");
+                return 1;
+            }
+            save_table(file, &table);
+            fclose(file);
+            break;
         }
 
     }
 
-
-    print_table(&table);
-
-    // TODO: free table
     free_table(&table);
 }
