@@ -7,6 +7,14 @@
 
 #define CAPACITY_UNIT 4
 
+static const char TOMBSTONE_MARKER[] = "";
+#define TOMBSTONE ((char*)TOMBSTONE_MARKER)
+
+int is_slot_occupied(Entry* entry_list, size_t idx) {
+    if(entry_list[idx].key != NULL && entry_list[idx].key != TOMBSTONE) return 1;
+    return 0;
+}
+
 void init_entry_list(Hashtable* table, size_t capacity) {
     table->entry_list = malloc(sizeof(Entry) * capacity);
     
@@ -77,11 +85,11 @@ void resize_table(Hashtable* table) {
     }
 
     for(size_t i = 0; i < table->capacity; i++) {
-        if(table->entry_list[i].key != NULL) {
+        if(is_slot_occupied(table->entry_list, i)) {
             // rehash with new capacity
             int idx = hash(table->entry_list[i].key, new_capacity);
             int start = idx;
-            while(entry_list[idx].key != NULL) {
+            while(is_slot_occupied(entry_list, idx)) {
                 idx++;
                 if(idx >= table->capacity) idx = 0;
                 if(idx == start) return;
@@ -103,7 +111,7 @@ void add_item(Hashtable* table, char* key, char* value) {
     
     size_t idx = hash(key, table->capacity);
 
-    while(table->entry_list[idx].key != NULL) {
+    while(is_slot_occupied(table->entry_list, idx)) {
         if (strcmp(table->entry_list[idx].key, key) == 0) {
             // update value
             free(table->entry_list[idx].value);
@@ -151,7 +159,7 @@ int delete_item(Hashtable* table, char* key) {
     free(table->entry_list[idx].key);
     free(table->entry_list[idx].value);
     table->entry_list[idx] = (Entry){
-        .key = NULL,
+        .key = TOMBSTONE,
         .value = NULL
     };
     return 0;
