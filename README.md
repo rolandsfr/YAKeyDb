@@ -1,4 +1,4 @@
-# KeyDB
+# YAKeyDB
 
 In-memory key-value store.
 
