@@ -69,17 +69,27 @@ void resize_table(Hashtable* table) {
         return;
     }
 
-    for(size_t i = 0; i < table->capacity; i++) {
-        entry_list[i] = table->entry_list[i];
-    }
-
-    for(size_t i = table->capacity; i < new_capacity; i++) {
+    for(size_t i = 0; i < new_capacity; i++) {
         entry_list[i] = (Entry){
             .key = NULL,
             .value = NULL
         };
     }
-    
+
+    for(size_t i = 0; i < table->capacity; i++) {
+        if(table->entry_list[i].key != NULL) {
+            // rehash with new capacity
+            int idx = hash(table->entry_list[i].key, new_capacity);
+            int start = idx;
+            while(entry_list[idx].key != NULL) {
+                idx++;
+                if(idx >= table->capacity) idx = 0;
+                if(idx == start) return;
+            }
+            entry_list[idx] = table->entry_list[i];
+        } 
+    }
+
     free(table->entry_list); // no need to free strings, they will be used in new array
     table->capacity = new_capacity;
     table->entry_list = entry_list;
@@ -112,6 +122,19 @@ void add_item(Hashtable* table, char* key, char* value) {
     table->size++;
 }
 
+char* get_item(Hashtable*table, char* key) {
+    size_t idx = hash(key, table->capacity);
+    size_t start = idx;
+    while(table->entry_list[idx].key != NULL) {
+        if(strcmp(table->entry_list[idx].key, key) == 0) {
+            return table->entry_list[idx].value;
+        }
+        idx++;
+        if(idx >= table->capacity) idx = 0;
+        if(idx == start) break;
+    }
+    return NULL;
+}
 
 void free_table(Hashtable* table) {
     free_entry_list(table->entry_list, table->capacity);

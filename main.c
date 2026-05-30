@@ -31,6 +31,8 @@ int main() {
     char arg_payload[MAX_ARG_COUNT][256] = {0};
     int word_count = 0;
 
+    printf("item count added: %zu\n", table.size);
+
     // wait for commands
     while(1) {
         // reset command payload buffer
@@ -46,13 +48,21 @@ int main() {
                 add_item(&table, arg_payload[1], arg_payload[2]);
                 printf(">> success\n");
             } else {
-                printf("expected 2 args.\n");
+                printf("expected 2 args (key value pair).\n");
             }
 
         } else if(strcmp(arg_payload[0], "DELETE") == 0) {
 
         } else if(strcmp(arg_payload[0], "GET") == 0) {
-
+            if(word_count == 2) {
+                char* value = get_item(&table, arg_payload[1]);
+                if(!value) {
+                    printf(">> null\n");
+                }
+                printf(">> %s\n", value);
+            } else {
+                printf("expected 1 arg (key).\n");
+            }
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
             print_table(&table);
 
