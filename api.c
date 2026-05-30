@@ -72,7 +72,7 @@ void resize_table(Hashtable* table) {
     size_t new_capacity = table->capacity * CAPACITY_UNIT;
     entry_list = malloc(sizeof(Entry) * new_capacity);
     
-    if(!table->entry_list) {
+    if(!entry_list) {
         printf("Allocation failed!");
         return;
     }
@@ -91,7 +91,7 @@ void resize_table(Hashtable* table) {
             int start = idx;
             while(is_slot_occupied(entry_list, idx)) {
                 idx++;
-                if(idx >= table->capacity) idx = 0;
+                if(idx >= new_capacity) idx = 0;
                 if(idx == start) return;
             }
             entry_list[idx] = table->entry_list[i];
@@ -101,7 +101,6 @@ void resize_table(Hashtable* table) {
     free(table->entry_list); // no need to free strings, they will be used in new array
     table->capacity = new_capacity;
     table->entry_list = entry_list;
-    printf("reallocated to capacity: %zu\n", table->capacity);
 }
 
 void add_item(Hashtable* table, char* key, char* value) {
@@ -162,6 +161,7 @@ int delete_item(Hashtable* table, char* key) {
         .key = TOMBSTONE,
         .value = NULL
     };
+    table->size--;
     return 0;
 }
 

@@ -5,24 +5,21 @@
 #include "api.h"
 #include "cli.h"
 
-int main() {
+int main(int argc, char** argv ) {
     Hashtable table;
     init_table(&table);
 
-    // get store file
-    printf("please enter storefile path: ");
-    char filepath[1024] = {0};
-    fgets(filepath, sizeof(filepath), stdin);
-    filepath[strcspn(filepath, "\r\n")] = '\0';
-    FILE* file = fopen(filepath, "r+");
+    if(argc == 2 && argv[1]) {
+        FILE* file = fopen(argv[1], "a+");
     
-    if(file == NULL) {
-        printf("Failed to open the file. Starting without data.\n");
-    } else {
-        load_file(file, &table);
-        fclose(file);
+        if(file == NULL) {
+            printf("Failed to open the file. Starting without data.\n");
+        } else {
+            load_file(file, &table);
+            fclose(file);
+        }
     }
-    
+
     char arg_payload[MAX_ARG_COUNT][256] = {0};
     int word_count = 0;
 
@@ -41,7 +38,7 @@ int main() {
                 add_item(&table, arg_payload[1], arg_payload[2]);
                 printf(">> success\n");
             } else {
-                printf("expected 2 args (key value pair).\n");
+                printf(">> expected 2 args (key value pair).\n");
             }
 
         } else if(strcmp(arg_payload[0], "DELETE") == 0) {
@@ -64,7 +61,7 @@ int main() {
                     printf(">> %s\n", value);
                 }
             } else {
-                printf("expected 1 arg (key).\n");
+                printf(">> expected 1 arg (key).\n");
             }
         } else if(strcmp(arg_payload[0], "LIST") == 0) {
             print_table(&table);
@@ -79,10 +76,21 @@ int main() {
                     printf(">> True\n");
                 }
             } else {
-                printf("expected 1 arg (key).\n");
+                printf(">> expected 1 arg (key).\n");
             }
         } else if (strcmp(arg_payload[0], "EXIT") == 0) {
-            file = fopen(filepath, "w"); // reopen to truncate contents to overwrite with updated data
+            char filename[1024];
+            if(argc < 2) {
+                printf(">> No data file was provided in cli arguments. Please provide one to save progress: \n");
+                fgets(filename, sizeof(filename), stdin);
+                filename[strcspn(filename, "\r\n")] = '\0';
+            }
+            if(argc == 2 && argv[1]) {
+              strcpy(filename, argv[1]);
+            }
+
+            FILE* file = fopen(filename, "w");
+            
             if(!file) {
                 printf("failed to open the file.\n");
                 return 1;
