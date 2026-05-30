@@ -20,7 +20,9 @@ void print_table(Hashtable* table);
 
 void add_item(Hashtable* table, char* key, char* value);
 
-char* get_item(Hashtable*table, char*key);
+char* get_item(Hashtable* table, char* key);
+
+int delete_item(Hashtable* table, char* key);
 
 void free_table(Hashtable* table);
 

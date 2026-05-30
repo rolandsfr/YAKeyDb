@@ -122,18 +122,40 @@ void add_item(Hashtable* table, char* key, char* value) {
     table->size++;
 }
 
-char* get_item(Hashtable*table, char* key) {
-    size_t idx = hash(key, table->capacity);
-    size_t start = idx;
+int get_item_idx(Hashtable*table, char* key) {
+    int idx = hash(key, table->capacity);
+    int start = idx;
     while(table->entry_list[idx].key != NULL) {
         if(strcmp(table->entry_list[idx].key, key) == 0) {
-            return table->entry_list[idx].value;
+            return idx;
         }
         idx++;
         if(idx >= table->capacity) idx = 0;
         if(idx == start) break;
     }
-    return NULL;
+    return -1;
+}
+
+char* get_item(Hashtable* table, char* key) {
+    int idx = get_item_idx(table, key);
+    if(idx == -1) {
+        return NULL;
+    } else {
+        return table->entry_list[idx].value;
+    }
+}
+
+
+int delete_item(Hashtable* table, char* key) {
+    int idx = get_item_idx(table, key);
+    if(idx == -1) return 1;
+    free(table->entry_list[idx].key);
+    free(table->entry_list[idx].value);
+    table->entry_list[idx] = (Entry){
+        .key = NULL,
+        .value = NULL
+    };
+    return 0;
 }
 
 void free_table(Hashtable* table) {

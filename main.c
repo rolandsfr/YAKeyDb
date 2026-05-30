@@ -52,7 +52,16 @@ int main() {
             }
 
         } else if(strcmp(arg_payload[0], "DELETE") == 0) {
-
+            if(word_count == 2) {
+                int res = delete_item(&table, arg_payload[1]);
+                if(res == -1) {
+                    printf(">> fail\n");
+                } else {
+                printf(">> success\n");
+                }
+            } else {
+                printf("expected 1 arg (key).\n");
+            }
         } else if(strcmp(arg_payload[0], "GET") == 0) {
             if(word_count == 2) {
                 char* value = get_item(&table, arg_payload[1]);
