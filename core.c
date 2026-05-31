@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "api.h"
-#include "cli.h"
+#include "parse.h"
+#include "core.h"
 
 #define CAPACITY_UNIT 4
 
@@ -194,5 +194,31 @@ void load_file(FILE* file, Hashtable* table) {
             continue;
         }
         add_item(table, params[0], params[1]);
+    }
+}
+
+// LOGS
+
+void keydb_log(FILE* logfile, char args[][256], int word_count) {
+    if(!logfile || word_count <= 0) return;
+
+    for (int i = 0; i < word_count; i++) {
+        if(i > 0) {
+            fputc(' ', logfile); // arg separator 
+        }
+        fputs(args[i], logfile);
+    }
+    fputc('\n', logfile); 
+    fflush(logfile);
+}
+
+// HELPERS
+
+int require_words(const int word_count_expected, int word_count_received) {
+    if(word_count_expected == word_count_received) {
+        return 1;
+    } else {
+        printf(">> expected %d args(s).\n", word_count_expected - 1);
+        return 0;
     }
 }

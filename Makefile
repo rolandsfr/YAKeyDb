@@ -1,4 +1,4 @@
-objects := main.o api.o cli.o
+objects := main.o core.o parse.o
 flags := -Wall -Wextra  -std=c99 
 
 # link (sanitizer flags must be passed at link time too)
@@ -10,11 +10,11 @@ main.o: main.c
 	gcc $(flags) -c main.c -o main.o
 
 # compile helpers
-api.o: api.c
-	gcc $(flags) -c api.c -o api.o 
+core.o: core.c
+	gcc $(flags) -c core.c -o core.o 
 
-cli.o: cli.c
-	gcc $(flags) -c cli.c -o cli.o 
+parse.o: parse.c
+	gcc $(flags) -c parse.c -o parse.o 
 
 # debug
 debug: flags += -g 
@@ -22,4 +22,4 @@ debug: clean main
 
 # clean
 clean:
-	rm -f main main.o api.o cli.o
+	rm -f main main.o core.o parse.o core

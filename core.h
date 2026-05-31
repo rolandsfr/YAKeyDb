@@ -18,6 +18,12 @@ void init_table(Hashtable* table);
 
 void print_table(Hashtable* table);
 
+void free_table(Hashtable* table);
+
+int require_words(const int word_count_expected, int word_count_received);
+
+/** CRUD */
+
 void add_item(Hashtable* table, char* key, char* value);
 
 char* get_item(Hashtable* table, char* key);
@@ -26,7 +32,11 @@ int delete_item(Hashtable* table, char* key);
 
 int get_item_idx(Hashtable*table, char* key);
 
-void free_table(Hashtable* table);
+
+/** LOG */
+
+void keydb_log(FILE* logfile, char args[][256], int word_count);
+
 
 /** IO */ 
 
