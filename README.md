@@ -45,3 +45,19 @@ EXISTS <key>
 ```
 EXIT
 ```
+
+## Sanity test
+
+To check for hard regressions use test script to launch simple scenario:
+```
+chmod +x test.sh
+./test.sh
+```
+It should output
+```
+>> success
+>> bar
+>> success
+>> False
+0
+```
